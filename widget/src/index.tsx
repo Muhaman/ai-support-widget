@@ -33,8 +33,8 @@ if (siteKey && apiUrl) {
   const config: WidgetConfig = {
     siteKey,
     apiUrl,
-    ...(script.dataset.title ? { title: script.dataset.title } : {}),
-    ...(script.dataset.primaryColor ? { primaryColor: script.dataset.primaryColor } : {}),
+    title: script?.dataset.title,
+    primaryColor: script?.dataset.primaryColor,
   };
   if (document.body) init(config);
   else document.addEventListener("DOMContentLoaded", () => init(config), { once: true });
