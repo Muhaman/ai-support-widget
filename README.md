@@ -75,7 +75,7 @@ curl http://localhost:3000/v1/conversations/<id> -H 'x-site-key: pk_demo' -H 'or
 
 ## Design decisions & trade-offs
 
-- **Streaming plus a client tool.** Each model turn streams; if it ends in `escalate_to_human`, the server runs the tool, appends the full assistant content and a `tool_result`, and continues the stream so the handoff message reaches the user in the same SSE response. The tool is `strict: true` with `eager_input_streaming`; because eager streaming skips server-side validation, the input is re-validated with zod before a ticket is created. `tool_choice` stays `auto`.
+- **Streaming plus a client tool.** Each model turn streams; if it ends in `escalate_to_human`, the server runs the tool, appends the full assistant content and a `tool_result`, and continues the stream so the handoff message reaches the user in the same SSE response. The tool uses `eager_input_streaming`; because eager streaming skips server-side validation, the input is re-validated with zod before a ticket is created. `tool_choice` stays `auto`.
 - **No fixed reply on a KB miss.** A support bot should still answer a greeting, so the system prompt says no relevant articles were found and tells the model to offer a handoff instead of guessing.
 - **In-memory KB index.** A FAQ-sized corpus does not need a vector database; cosine similarity over a few dozen vectors is instant. A large corpus would need Atlas Vector Search or similar.
 - **Explicit stream failures.** Refusals, truncation and upstream errors become an SSE `error` event; the widget also treats a stream that ends without `done` as an error and offers a retry. A client disconnect aborts the upstream request.

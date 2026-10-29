@@ -9,7 +9,6 @@ export const escalateTool: LlmTool = {
   description:
     "Hand the conversation to a human support agent by opening a ticket. Use when the customer asks for a person, " +
     "the knowledge base cannot resolve the issue, or the issue concerns billing or a suspected bug.",
-  strict: true,
   eager_input_streaming: true,
   input_schema: {
     type: "object",

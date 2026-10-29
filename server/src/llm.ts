@@ -9,7 +9,6 @@ export interface LlmMessage {
 export interface LlmTool {
   name: string;
   description: string;
-  strict: true;
   eager_input_streaming: true;
   input_schema: {
     type: "object";
