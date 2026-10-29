@@ -1,0 +1,43 @@
+services:
+  mongo:
+    image: mongo:8
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?set ANTHROPIC_API_KEY}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5-5}
+      MONGODB_URI: mongodb://mongo:27017
+      SITES_JSON: '[{"siteKey":"pk_demo","name":"Acme Cloud (demo)","origins":["http://localhost:8080"]}]'
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    volumes:
+      - model-cache:/app/.model-cache
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  demo:
+    build:
+      context: .
+      dockerfile: demo/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
+  model-cache:
